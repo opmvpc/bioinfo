@@ -36,6 +36,7 @@
         id="resultat"
         class="form-input"
         rows="5"
+        readonly
       ></textarea>
     </div>
   </div>

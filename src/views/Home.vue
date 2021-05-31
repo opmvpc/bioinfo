@@ -12,6 +12,17 @@
           </li>
         </ul>
       </li>
+      <li>
+        <h2>Comparaison de chaines de caractères</h2>
+        <ul>
+          <li>
+            <router-link to="/levenshtein">Distance de Levenshtein</router-link>
+          </li>
+          <li>
+            <router-link to="/levenshtein-benchmark">Benchmark</router-link>
+          </li>
+        </ul>
+      </li>
     </ul>
   </div>
 </template>
