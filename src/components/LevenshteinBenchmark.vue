@@ -119,6 +119,7 @@ export default {
       );
     },
     async getResultatIter() {
+      this.levensteinIter2(this.chaine1, this.chaine2)
       await this.calculerLenvenshteinDistance("iter").then(
         this.successCallback,
         this.failureCallback
@@ -184,13 +185,6 @@ export default {
         this.levensteinRec(a.slice(1), b.slice(1)) + (a[0] == b[0] ? 0 : 1)
       );
     },
-    // levensteinIter2(chaine1, chaine2) {
-    //   let operations = [];
-    //   let realCost;
-    //   let matrix = [];
-
-    //   return operations;
-    // },
     levensteinIter(src, tgt) {
       let realCost;
 
@@ -239,6 +233,38 @@ export default {
       } else {
         return temps + " millisecondes";
       }
+    },
+      levensteinIter2(chaine1, chaine2) {
+      let operations = [];
+      let matrix = new Array(chaine1.length).fill(0).map(() => new Array(chaine2.length).fill(0));
+
+      for (let i = 1; i < matrix.length; i++) {
+        matrix[i] = i;
+      }
+
+      for (let j = 1; j < matrix.length; j++) {
+        matrix[0][j] = j;
+      }
+
+      for (let i = 1; i < matrix.length; i++) {
+        for (let j = 1; j < matrix[i].length; j++) {
+          let substitutionCost;
+          if (chaine1[i] === chaine2[j]) {
+            substitutionCost = 0;
+          } else {
+            substitutionCost = 1;
+          }
+
+          matrix[i][j] = Math.min(
+
+          )
+
+          const element = matrix[i][j];
+
+        }
+
+      }
+      return operations;
     }
   }
 };
