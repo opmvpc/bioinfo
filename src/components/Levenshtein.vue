@@ -51,7 +51,7 @@
     <div>
       <div class="mt-12 xl:mt-0" v-show="resultMatrix.length > 0">
         <div class="prose">
-          <h2 class="mb-4">Résultat</h2>
+          <h2>Résultat</h2>
         </div>
         <table ref="matrix" >
           <tr v-for="(row, indexRow) in resultMatrix" :key="indexRow">
@@ -202,13 +202,13 @@ export default {
 <style lang="postcss" scoped>
 
 table {
-  @apply inline-flex border-4 border-app-200
+  @apply inline-flex border-4 border-app-200 mt-4
 }
 td {
-  @apply flex items-center justify-center text-2xl xl:text-4xl border-4 border-app-200 shadow-inner h-16 w-16 xl:h-24 xl:w-24 text-center font-mono;
+  @apply flex items-center justify-center text-2xl xl:text-4xl border-4 border-app-200 shadow-inner h-12 w-12 xl:h-16 xl:w-16 text-center font-mono;
 }
 
 td.char {
-  @apply capitalize text-2xl xl:text-4xl font-bold border-4 border-app-200 shadow-inner h-16 w-16 xl:h-24 xl:w-24 text-center text-app-700 bg-app-50;
+  @apply capitalize text-2xl xl:text-4xl font-bold border-4 border-app-200 shadow-inner h-12 w-12 xl:h-16 xl:w-16 text-center text-app-700 bg-app-50;
 }
 </style>
