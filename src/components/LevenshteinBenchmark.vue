@@ -184,6 +184,13 @@ export default {
         this.levensteinRec(a.slice(1), b.slice(1)) + (a[0] == b[0] ? 0 : 1)
       );
     },
+    // levensteinIter2(chaine1, chaine2) {
+    //   let operations = [];
+    //   let realCost;
+    //   let matrix = [];
+
+    //   return operations;
+    // },
     levensteinIter(src, tgt) {
       let realCost;
 

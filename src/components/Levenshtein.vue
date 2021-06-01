@@ -2,14 +2,16 @@
   <div class="grid grid-cols-1 xl:grid-cols-2 gap-8">
     <div class="prose">
       <h1>Distance de Levenshtein</h1>
-      Trouver la distance de Levenshtein, càd le nombre de modifications qu'il
-      faudrait pour obtenir une chaine de caractères à partir d'une autre. Les
-      modifications possibles sont les suivantes:
-      <ul>
-        <li>Ajouter une lettre</li>
-        <li>Supprimer une lettre</li>
-        <li>Modifier une lettre</li>
-      </ul>
+      <div>
+        Trouver la distance de Levenshtein, càd le nombre de modifications qu'il
+        faudrait pour obtenir une chaine de caractères à partir d'une autre. Les
+        modifications possibles sont les suivantes:
+        <ul>
+          <li>Ajouter une lettre</li>
+          <li>Supprimer une lettre</li>
+          <li>Modifier une lettre</li>
+        </ul>
+      </div>
       <h2>Exemple:</h2>
       <h3>Input:</h3>
       <div class="bg-gray-300 p-4">
@@ -56,7 +58,21 @@
         />
       </div>
     </div>
-    <div></div>
+    <div>
+      <div class="mt-12 xl:mt-0" v-if="resultMatrix.length > 0">
+        <table>
+          <tr v-for="(row, indexRow) in resultMatrix" :key="indexRow">
+            <td
+              v-for="(col, indexCol) in resultMatrix[indexRow]"
+              :key="indexCol"
+              :class="[indexRow === 0 || indexCol === 0 ? 'char' : '']"
+            >
+              {{ resultMatrix[indexRow][indexCol] }}
+            </td>
+          </tr>
+        </table>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -72,10 +88,40 @@ export default {
   },
   methods: {
     async getResultat() {
+      this.animateLevenshtein();
       //   this.resultMatrix = this.levensteinIter(this.chaine1, this.chaine2)
       // await this.calculerLenvenshteinDistance().then(this.successCallback, this.failureCallback);
     },
-    animateLevenshtein() {},
+    animateLevenshtein() {
+      this.createMatrix();
+      // const operations = this.levensteinIter(this.chaine1, this.chaine2);
+      // this.renderOperations(operations);
+    },
+    renderOperations() {},
+    createMatrix() {
+      let matrix = new Array(this.chaine2.length + 2);
+      for (let i = 0; i < matrix.length; i++) {
+        matrix[i] = new Array(this.chaine1.length + 2);
+        for (let j = 0; j < matrix[i].length; j++) {
+          matrix[i][j] = "";
+        }
+      }
+
+      // first line
+      matrix[0][0] = "";
+      matrix[0][1] = "";
+      matrix[1][0] = "";
+
+      for (let index = 2; index < matrix[0].length; index++) {
+        matrix[0][index] = this.chaine1[index - 2];
+      }
+
+      for (let i = 2; i < matrix.length; i++) {
+        matrix[i][0] = this.chaine2[i - 2];
+      }
+
+      this.resultMatrix = matrix;
+    },
     calculerLenvenshteinDistance() {
       return new Promise((successCallback, failureCallback) => {
         console.log("...");
@@ -97,49 +143,24 @@ export default {
     },
     failureCallback(erreur) {
       console.error("L'opération a échoué avec le message : " + erreur);
-    },
-    levensteinIter(src, tgt) {
-      let realCost;
-
-      var srcLength = src.length,
-        tgtLength = tgt.length,
-        tempString,
-        tempLength; // for swapping
-      this.resultMatrix = new Array();
-      this.resultMatrix[0] = new Array(); // Multi dimensional
-
-      // To limit the space in minimum of source and target,
-      // we make sure that srcLength is greater than tgtLength
-      if (srcLength < tgtLength) {
-        tempString = src;
-        src = tgt;
-        tgt = tempString;
-        tempLength = srcLength;
-        srcLength = tgtLength;
-        tgtLength = tempLength;
-      }
-
-      for (var c = 0; c < tgtLength + 1; c++) {
-        this.resultMatrix[0][c] = c;
-      }
-
-      for (var i = 1; i < srcLength + 1; i++) {
-        this.resultMatrix[i] = new Array();
-        this.resultMatrix[i][0] = i;
-        for (var j = 1; j < tgtLength + 1; j++) {
-          realCost = src.charAt(i - 1) == tgt.charAt(j - 1) ? 0 : 1;
-          this.resultMatrix[i][j] = Math.min(
-            this.resultMatrix[i - 1][j] + 1,
-            this.resultMatrix[i][j - 1] + 1,
-            this.resultMatrix[i - 1][j - 1] + realCost // same logic as our previous example.
-          );
-        }
-      }
-
-      return this.resultMatrix;
     }
+    // levensteinIter(chaine1, chaine2) {
+    //   let operations = [];
+    //   let realCost;
+    //   let matrix = [];
+
+    //   return operations;
+    // }
   }
 };
 </script>
 
-<style></style>
+<style lang="postcss" scoped>
+td {
+  @apply text-xl border-4 border-app-200 h-16 w-16 text-center;
+}
+
+td.char {
+  @apply capitalize text-2xl font-bold border-4 border-app-200 h-16 w-16 text-center text-app-700 bg-app-50;
+}
+</style>
