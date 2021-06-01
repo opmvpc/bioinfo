@@ -43,6 +43,18 @@
         />
       </div>
       <div class="mb-4">
+        <label for="chaine2">Vitesse de l'animation</label>
+        <input
+          type="range"
+          min="10"
+          max="2000"
+          v-model="timer"
+          id="timer-input"
+          class="form-input"
+        />
+        <span>{{ timer / 1000 }} secondes</span>
+      </div>
+      <div class="mb-4">
         <button class="btn" @click.prevent="getResultat()">
           Résultat
         </button>
@@ -73,8 +85,8 @@
 export default {
   data: () => {
     return {
-      chaine1: "kitten",
-      chaine2: "sitting",
+      chaine1: "CAATCCAAC",
+      chaine2: "CATTTCACC",
       resultat: "",
       resultMatrix: [],
       timer: 200
