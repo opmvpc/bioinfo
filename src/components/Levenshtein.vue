@@ -47,20 +47,13 @@
           Résultat
         </button>
       </div>
-      <div class="mb-4">
-        <label for="resultat">Résultat</label>
-        <input
-          type="number"
-          id="resultat"
-          class="form-input"
-          v-model="resultat"
-          readonly
-        />
-      </div>
     </div>
     <div>
-      <div class="mt-12 xl:mt-0" v-if="resultMatrix.length > 0">
-        <table>
+      <div class="mt-12 xl:mt-0" v-show="resultMatrix.length > 0">
+        <div class="prose">
+          <h2 class="mb-4">Résultat</h2>
+        </div>
+        <table ref="matrix" >
           <tr v-for="(row, indexRow) in resultMatrix" :key="indexRow">
             <td
               v-for="(col, indexCol) in resultMatrix[indexRow]"
@@ -80,30 +73,39 @@
 export default {
   data: () => {
     return {
-      chaine1: "CAATCCAAC",
-      chaine2: "CATTTCACC",
+      chaine1: "kitten",
+      chaine2: "sitting",
       resultat: "",
-      resultMatrix: []
+      resultMatrix: [],
+      timer: 200
     };
   },
   methods: {
     async getResultat() {
       this.animateLevenshtein();
-      //   this.resultMatrix = this.levensteinIter(this.chaine1, this.chaine2)
-      // await this.calculerLenvenshteinDistance().then(this.successCallback, this.failureCallback);
     },
     animateLevenshtein() {
       this.createMatrix();
-      // const operations = this.levensteinIter(this.chaine1, this.chaine2);
-      // this.renderOperations(operations);
+      const operations = this.levensteinIter(this.chaine1, this.chaine2);
+      setTimeout(() => {
+        this.$refs.matrix.scrollIntoView({behavior: 'smooth'});
+      }, 200);
+      this.renderOperations(operations);
     },
-    renderOperations() {},
+    async renderOperations(operations) {
+      const timer = ms => new Promise(res => setTimeout(res, ms))
+      for (let index = 0; index < operations.length; index++) {
+        const operation = operations[index];
+        this.resultMatrix[operation.y + 1][operation.x + 1] = operation.value
+        await timer(this.timer);
+      }
+    },
     createMatrix() {
       let matrix = new Array(this.chaine2.length + 2);
       for (let i = 0; i < matrix.length; i++) {
         matrix[i] = new Array(this.chaine1.length + 2);
         for (let j = 0; j < matrix[i].length; j++) {
-          matrix[i][j] = "";
+          matrix[i][j] = 0;
         }
       }
 
@@ -122,89 +124,75 @@ export default {
 
       this.resultMatrix = matrix;
     },
-    calculerLenvenshteinDistance() {
-      return new Promise((successCallback, failureCallback) => {
-        console.log("...");
-        this.resultMatrix = this.levensteinIter(this.chaine1, this.chaine2);
-        const resultat = this.resultMatrix[this.chaine2.length][
-          this.chaine1.length
-        ];
-        console.log(this.resultMatrix);
-        if (Number.isInteger(resultat)) {
-          this.resultat = resultat;
-          successCallback(resultat);
-        } else {
-          failureCallback(resultat);
-        }
-      });
-    },
-    successCallback(resultat) {
-      console.log("L'opération a réussi avec le message : " + resultat);
-    },
-    failureCallback(erreur) {
-      console.error("L'opération a échoué avec le message : " + erreur);
-    },
-    levensteinIter2(chaine1, chaine2) {
-      const tailleChaine1 = chaine1.length;
-      const tailleChaine2 = chaine2.length;
+    levensteinIter(chaine1, chaine2) {
+      const tailleChaine1 = chaine1.length+1;
+      const tailleChaine2 = chaine2.length+1;
 
       let operations = [];
       let matrix = new Array(tailleChaine1).fill(0).map(() => new Array(tailleChaine2).fill(0));
 
       for (let i = 1; i < tailleChaine1; i++) {
         matrix[i][0] = i;
+        operations.push(this.updateCellOperation(i, 0, i));
       }
 
       for (let j = 1; j < tailleChaine2; j++) {
         matrix[0][j] = j;
+        operations.push(this.updateCellOperation(0, j, j));
       }
       console.log(matrix);
 
       for (let j = 1; j < tailleChaine2; j++) {
         for (let i = 1; i < tailleChaine1; i++) {
           let substitutionCost;
-          if (chaine1.charAt(i) === chaine2.charAt(j)) {
+          if (chaine1.charAt(i-1) === chaine2.charAt(j-1)) {
             substitutionCost = 0;
           } else {
             substitutionCost = 1;
           }
 
-          matrix[i][j] = Math.min(
+          let min = Math.min(
             matrix[i-1][j] + 1,
             matrix[i][j-1] + 1,
             matrix[i-1][j-1] + substitutionCost
-          )
+          );
+          matrix[i][j] = min;
+        operations.push(this.updateCellOperation(i, j, min));
         }
       }
-      console.log(matrix);
+      console.log(operations);
       return operations;
     },
-    updateCellOperation(xCoord, yCoord) {
+    updateCellOperation(xCoord, yCoord, value) {
       return {
         type: 'update-cell',
         x: xCoord,
-        y: yCoord
+        y: yCoord,
+        value: value,
       }
     },
-    deletionOperation(xCoord, yCoord){
+    deletionOperation(xCoord, yCoord, value){
       return {
         type: 'delete',
         x: xCoord,
-        y: yCoord
+        y: yCoord,
+        value: value,
       }
     },
-    insertionOperation(xCoord, yCoord){
+    insertionOperation(xCoord, yCoord, value){
       return {
         type: 'insertion',
         x: xCoord,
-        y: yCoord
+        y: yCoord,
+        value: value,
       }
     },
-    substitutionOperation(xCoord, yCoord){
+    substitutionOperation(xCoord, yCoord, value){
       return {
         type: 'substitution',
         x: xCoord,
-        y: yCoord
+        y: yCoord,
+        value: value,
       }
     }
   }
@@ -212,11 +200,15 @@ export default {
 </script>
 
 <style lang="postcss" scoped>
+
+table {
+  @apply inline-flex border-4 border-app-200
+}
 td {
-  @apply text-xl border-4 border-app-200 h-16 w-16 text-center;
+  @apply flex items-center justify-center text-2xl xl:text-4xl border-4 border-app-200 shadow-inner h-16 w-16 xl:h-24 xl:w-24 text-center font-mono;
 }
 
 td.char {
-  @apply capitalize text-2xl font-bold border-4 border-app-200 h-16 w-16 text-center text-app-700 bg-app-50;
+  @apply capitalize text-2xl xl:text-4xl font-bold border-4 border-app-200 shadow-inner h-16 w-16 xl:h-24 xl:w-24 text-center text-app-700 bg-app-50;
 }
 </style>

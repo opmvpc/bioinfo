@@ -193,8 +193,8 @@ export default {
       }
     },
     levensteinIter(chaine1, chaine2) {
-      const tailleChaine1 = chaine1.length;
-      const tailleChaine2 = chaine2.length;
+      const tailleChaine1 = chaine1.length+1;
+      const tailleChaine2 = chaine2.length+1;
 
       let matrix = new Array(tailleChaine1).fill(0).map(() => new Array(tailleChaine2).fill(0));
 
@@ -209,7 +209,7 @@ export default {
       for (let j = 1; j < tailleChaine2; j++) {
         for (let i = 1; i < tailleChaine1; i++) {
           let substitutionCost;
-          if (chaine1.charAt(i) === chaine2.charAt(j)) {
+          if (chaine1.charAt(i-1) === chaine2.charAt(j-1)) {
             substitutionCost = 0;
           } else {
             substitutionCost = 1;
