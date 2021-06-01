@@ -28,10 +28,10 @@ export default {
 
 <style lang="postcss" scoped>
 td {
-  @apply text-xl border-2 border-app-200 h-16 w-16 text-center;
+  @apply text-xl border-4 border-app-200 h-16 w-16 text-center;
 }
 
 td.char {
-  @apply text-2xl font-bold border-2 border-app-200 h-16 w-16 text-center text-app-700 bg-app-50;
+  @apply text-2xl font-bold border-4 border-app-200 h-16 w-16 text-center text-app-700 bg-app-50;
 }
 </style>

@@ -1,14 +1,13 @@
 <template>
   <div class="prose">
     <h1>Distance de Levenshtein: Benchmark</h1>
-    <p>
-      Test des 3 algorithmes suivants:
-        <ul>
-          <li>Récursif naif</li>
-          <li>Récursif mémoïsation</li>
-          <li>Itératif backtracking</li>
-        </ul>
-    </p>
+
+    Test des 3 algorithmes suivants:
+    <ul>
+      <li>Récursif naif</li>
+      <li>Récursif mémoïsation</li>
+      <li>Itératif backtracking</li>
+    </ul>
     <h2>Exemple:</h2>
     <h3>Input:</h3>
     <div class="bg-gray-300 p-4">
@@ -36,10 +35,16 @@
         </div>
         <div class="mb-4">
           <label for="resultat-naif">Résultat récursif naïf</label>
-          <input type="number" id="resultat-naif" class="form-input" v-model="resultatNaif" readonly />
+          <input
+            type="number"
+            id="resultat-naif"
+            class="form-input"
+            v-model="resultatNaif"
+            readonly
+          />
         </div>
         <div v-show="tempsResultatNaif">
-          {{tempsResultatNaif}}
+          {{ tempsResultatNaif }}
         </div>
       </div>
       <div>
@@ -50,10 +55,16 @@
         </div>
         <div class="mb-4">
           <label for="resultat-memo">Résultat récursif mémoïsation</label>
-          <input type="number" id="resultat-memo" class="form-input" v-model="resultatMemo" readonly />
+          <input
+            type="number"
+            id="resultat-memo"
+            class="form-input"
+            v-model="resultatMemo"
+            readonly
+          />
         </div>
         <div v-if="tempsResultatMemo">
-          {{tempsResultatMemo}}
+          {{ tempsResultatMemo }}
         </div>
       </div>
       <div>
@@ -64,10 +75,16 @@
         </div>
         <div class="mb-4">
           <label for="resultat-iter">Résultat itératif backtracking</label>
-          <input type="number" id="resultat-iter" class="form-input" v-model="resultatIter" readonly />
+          <input
+            type="number"
+            id="resultat-iter"
+            class="form-input"
+            v-model="resultatIter"
+            readonly
+          />
         </div>
         <div v-if="tempsResultatIter">
-          {{tempsResultatIter}}
+          {{ tempsResultatIter }}
         </div>
       </div>
     </div>
@@ -85,19 +102,27 @@ export default {
       resultatMemo: "",
       tempsResultatMemo: 0,
       resultatIter: "",
-      tempsResultatIter: 0,
+      tempsResultatIter: 0
     };
   },
   methods: {
     async getResultatNaif() {
-      await this.calculerLenvenshteinDistance("naif").then(this.successCallback, this.failureCallback);
-
+      await this.calculerLenvenshteinDistance("naif").then(
+        this.successCallback,
+        this.failureCallback
+      );
     },
     async getResultatMemoization() {
-      await this.calculerLenvenshteinDistance("memo").then(this.successCallback, this.failureCallback);
+      await this.calculerLenvenshteinDistance("memo").then(
+        this.successCallback,
+        this.failureCallback
+      );
     },
     async getResultatIter() {
-      await this.calculerLenvenshteinDistance("iter").then(this.successCallback, this.failureCallback);
+      await this.calculerLenvenshteinDistance("iter").then(
+        this.successCallback,
+        this.failureCallback
+      );
     },
     calculerLenvenshteinDistance(type) {
       return new Promise((successCallback, failureCallback) => {
@@ -116,16 +141,16 @@ export default {
 
         if (Number.isInteger(resultat)) {
           if (type === "naif") {
-          this.resultatNaif = resultat;
+            this.resultatNaif = resultat;
 
-          this.tempsResultatNaif = this.affichageTemps(t0, t1);
-        } else if (type === "memo") {
-          this.resultatMemo = resultat;
-          this.tempsResultatMemo = this.affichageTemps(t0, t1);
-        } else if (type === "iter") {
-          this.resultatIter = resultat;
-          this.tempsResultatIter = this.affichageTemps(t0, t1);
-        }
+            this.tempsResultatNaif = this.affichageTemps(t0, t1);
+          } else if (type === "memo") {
+            this.resultatMemo = resultat;
+            this.tempsResultatMemo = this.affichageTemps(t0, t1);
+          } else if (type === "iter") {
+            this.resultatIter = resultat;
+            this.tempsResultatIter = this.affichageTemps(t0, t1);
+          }
 
           successCallback(resultat);
         } else {
@@ -144,8 +169,9 @@ export default {
       if (!a.length) return b.length;
 
       return Math.min(
-          this.levensteinRec( a.slice(1), b ) + 1, this.levensteinRec( b.slice(1), a ) + 1,
-          this.levensteinRec( a.slice(1), b.slice(1) ) + ( a[0] == b[0] ? 0 : 1 )
+        this.levensteinRec(a.slice(1), b) + 1,
+        this.levensteinRec(b.slice(1), a) + 1,
+        this.levensteinRec(a.slice(1), b.slice(1)) + (a[0] == b[0] ? 0 : 1)
       );
     },
     levensteinMemo(a, b) {
@@ -153,16 +179,18 @@ export default {
       if (!a.length) return b.length;
 
       return Math.min(
-          this.levensteinRec( a.slice(1), b ) + 1, this.levensteinRec( b.slice(1), a ) + 1,
-          this.levensteinRec( a.slice(1), b.slice(1) ) + ( a[0] == b[0] ? 0 : 1 )
+        this.levensteinRec(a.slice(1), b) + 1,
+        this.levensteinRec(b.slice(1), a) + 1,
+        this.levensteinRec(a.slice(1), b.slice(1)) + (a[0] == b[0] ? 0 : 1)
       );
     },
     levensteinIter(src, tgt) {
       let realCost;
 
       var srcLength = src.length,
-      tgtLength = tgt.length,
-      tempString, tempLength; // for swapping
+        tgtLength = tgt.length,
+        tempString,
+        tempLength; // for swapping
 
       var resultMatrix = new Array();
       resultMatrix[0] = new Array(); // Multi dimensional
@@ -170,23 +198,27 @@ export default {
       // To limit the space in minimum of source and target,
       // we make sure that srcLength is greater than tgtLength
       if (srcLength < tgtLength) {
-        tempString = src; src = tgt; tgt = tempString;
-        tempLength = srcLength; srcLength = tgtLength; tgtLength = tempLength;
+        tempString = src;
+        src = tgt;
+        tgt = tempString;
+        tempLength = srcLength;
+        srcLength = tgtLength;
+        tgtLength = tempLength;
       }
 
-      for (var c = 0; c < tgtLength+1; c++) {
+      for (var c = 0; c < tgtLength + 1; c++) {
         resultMatrix[0][c] = c;
       }
 
-      for (var i = 1; i < srcLength+1; i++) {
+      for (var i = 1; i < srcLength + 1; i++) {
         resultMatrix[i] = new Array();
         resultMatrix[i][0] = i;
-        for (var j = 1; j < tgtLength+1; j++) {
-          realCost = (src.charAt(i-1) == tgt.charAt(j-1))? 0: 1;
+        for (var j = 1; j < tgtLength + 1; j++) {
+          realCost = src.charAt(i - 1) == tgt.charAt(j - 1) ? 0 : 1;
           resultMatrix[i][j] = Math.min(
-            resultMatrix[i-1][j]+1,
-            resultMatrix[i][j-1]+1,
-            resultMatrix[i-1][j-1] + realCost // same logic as our previous example.
+            resultMatrix[i - 1][j] + 1,
+            resultMatrix[i][j - 1] + 1,
+            resultMatrix[i - 1][j - 1] + realCost // same logic as our previous example.
           );
         }
       }
@@ -196,7 +228,7 @@ export default {
     affichageTemps(t0, t1) {
       const temps = t1 - t0;
       if (temps > 1000) {
-        return (temps/1000) + " secondes";
+        return temps / 1000 + " secondes";
       } else {
         return temps + " millisecondes";
       }
