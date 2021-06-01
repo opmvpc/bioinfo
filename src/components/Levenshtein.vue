@@ -143,14 +143,70 @@ export default {
     },
     failureCallback(erreur) {
       console.error("L'opération a échoué avec le message : " + erreur);
-    }
-    // levensteinIter(chaine1, chaine2) {
-    //   let operations = [];
-    //   let realCost;
-    //   let matrix = [];
+    },
+    levensteinIter2(chaine1, chaine2) {
+      const tailleChaine1 = chaine1.length;
+      const tailleChaine2 = chaine2.length;
 
-    //   return operations;
-    // }
+      let operations = [];
+      let matrix = new Array(tailleChaine1).fill(0).map(() => new Array(tailleChaine2).fill(0));
+
+      for (let i = 1; i < tailleChaine1; i++) {
+        matrix[i][0] = i;
+      }
+
+      for (let j = 1; j < tailleChaine2; j++) {
+        matrix[0][j] = j;
+      }
+      console.log(matrix);
+
+      for (let j = 1; j < tailleChaine2; j++) {
+        for (let i = 1; i < tailleChaine1; i++) {
+          let substitutionCost;
+          if (chaine1.charAt(i) === chaine2.charAt(j)) {
+            substitutionCost = 0;
+          } else {
+            substitutionCost = 1;
+          }
+
+          matrix[i][j] = Math.min(
+            matrix[i-1][j] + 1,
+            matrix[i][j-1] + 1,
+            matrix[i-1][j-1] + substitutionCost
+          )
+        }
+      }
+      console.log(matrix);
+      return operations;
+    },
+    updateCellOperation(xCoord, yCoord) {
+      return {
+        type: 'update-cell',
+        x: xCoord,
+        y: yCoord
+      }
+    },
+    deletionOperation(xCoord, yCoord){
+      return {
+        type: 'delete',
+        x: xCoord,
+        y: yCoord
+      }
+    },
+    insertionOperation(xCoord, yCoord){
+      return {
+        type: 'insertion',
+        x: xCoord,
+        y: yCoord
+      }
+    },
+    substitutionOperation(xCoord, yCoord){
+      return {
+        type: 'substitution',
+        x: xCoord,
+        y: yCoord
+      }
+    }
   }
 };
 </script>

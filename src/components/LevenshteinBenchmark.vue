@@ -119,7 +119,6 @@ export default {
       );
     },
     async getResultatIter() {
-      this.levensteinIter2(this.chaine1, this.chaine2)
       await this.calculerLenvenshteinDistance("iter").then(
         this.successCallback,
         this.failureCallback
@@ -185,47 +184,6 @@ export default {
         this.levensteinRec(a.slice(1), b.slice(1)) + (a[0] == b[0] ? 0 : 1)
       );
     },
-    levensteinIter(src, tgt) {
-      let realCost;
-
-      var srcLength = src.length,
-        tgtLength = tgt.length,
-        tempString,
-        tempLength; // for swapping
-
-      var resultMatrix = new Array();
-      resultMatrix[0] = new Array(); // Multi dimensional
-
-      // To limit the space in minimum of source and target,
-      // we make sure that srcLength is greater than tgtLength
-      if (srcLength < tgtLength) {
-        tempString = src;
-        src = tgt;
-        tgt = tempString;
-        tempLength = srcLength;
-        srcLength = tgtLength;
-        tgtLength = tempLength;
-      }
-
-      for (var c = 0; c < tgtLength + 1; c++) {
-        resultMatrix[0][c] = c;
-      }
-
-      for (var i = 1; i < srcLength + 1; i++) {
-        resultMatrix[i] = new Array();
-        resultMatrix[i][0] = i;
-        for (var j = 1; j < tgtLength + 1; j++) {
-          realCost = src.charAt(i - 1) == tgt.charAt(j - 1) ? 0 : 1;
-          resultMatrix[i][j] = Math.min(
-            resultMatrix[i - 1][j] + 1,
-            resultMatrix[i][j - 1] + 1,
-            resultMatrix[i - 1][j - 1] + realCost // same logic as our previous example.
-          );
-        }
-      }
-
-      return resultMatrix[srcLength][tgtLength];
-    },
     affichageTemps(t0, t1) {
       const temps = t1 - t0;
       if (temps > 1000) {
@@ -234,38 +192,39 @@ export default {
         return temps + " millisecondes";
       }
     },
-      levensteinIter2(chaine1, chaine2) {
-      let operations = [];
-      let matrix = new Array(chaine1.length).fill(0).map(() => new Array(chaine2.length).fill(0));
+    levensteinIter(chaine1, chaine2) {
+      const tailleChaine1 = chaine1.length;
+      const tailleChaine2 = chaine2.length;
 
-      for (let i = 1; i < matrix.length; i++) {
-        matrix[i] = i;
+      let matrix = new Array(tailleChaine1).fill(0).map(() => new Array(tailleChaine2).fill(0));
+
+      for (let i = 1; i < tailleChaine1; i++) {
+        matrix[i][0] = i;
       }
 
-      for (let j = 1; j < matrix.length; j++) {
+      for (let j = 1; j < tailleChaine2; j++) {
         matrix[0][j] = j;
       }
 
-      for (let i = 1; i < matrix.length; i++) {
-        for (let j = 1; j < matrix[i].length; j++) {
+      for (let j = 1; j < tailleChaine2; j++) {
+        for (let i = 1; i < tailleChaine1; i++) {
           let substitutionCost;
-          if (chaine1[i] === chaine2[j]) {
+          if (chaine1.charAt(i) === chaine2.charAt(j)) {
             substitutionCost = 0;
           } else {
             substitutionCost = 1;
           }
 
           matrix[i][j] = Math.min(
-
+            matrix[i-1][j] + 1,
+            matrix[i][j-1] + 1,
+            matrix[i-1][j-1] + substitutionCost
           )
-
-          const element = matrix[i][j];
-
         }
-
       }
-      return operations;
-    }
+
+      return matrix[tailleChaine1-1][tailleChaine2-1]
+      }
   }
 };
 </script>
