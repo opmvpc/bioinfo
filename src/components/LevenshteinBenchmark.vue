@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="prose">
     <h1>Distance de Levenshtein: Benchmark</h1>
     <p>
       Test des 3 algorithmes suivants:

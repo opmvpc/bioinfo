@@ -1,5 +1,5 @@
 <template>
-  <div class="">
+  <div class="px-4">
     <div class="font-inter container mx-auto border-4 border-black my-4">
       <div
         class="flex items-center justify-between border-b-4 border-black px-4 py-6 bg-indigo-400"
@@ -8,7 +8,7 @@
           >🧬BioInfo</router-link
         >
       </div>
-      <div class="p-4 prose">
+      <div class="p-4">
         <router-view />
       </div>
     </div>

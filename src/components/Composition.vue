@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="prose">
     <h1>Composition de chaine de caractères</h1>
     <p>
       Trouver toutes les sous-chaines de caractères en fonction d'une string
