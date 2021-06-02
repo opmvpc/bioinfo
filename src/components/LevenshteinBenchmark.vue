@@ -20,11 +20,31 @@
     <hr />
     <div class="mb-4">
       <label for="chaine1">Chaine de caractères 1</label>
-      <input type="text" id="chaine1" class="form-input" v-model="chaine1" />
+      <input
+        type="text"
+        id="chaine1"
+        name="chaine1"
+        class="form-input"
+        v-model="chaine1"
+      />
+      <span class="text-sm text-gray-500"
+        ><span class="font-bold">{{ chaine1.trim().length }}</span>
+        caractères</span
+      >
     </div>
     <div class="mb-4">
       <label for="chaine2">Chaine de caractères 2</label>
-      <input type="text" id="chaine2" class="form-input" v-model="chaine2" />
+      <input
+        type="text"
+        id="chaine2"
+        name="chaine2"
+        class="form-input"
+        v-model="chaine2"
+      />
+      <span class="text-sm text-gray-500"
+        ><span class="font-bold">{{ chaine2.trim().length }}</span>
+        caractères</span
+      >
     </div>
     <div class="flex flex-col space-y-8 mt-12 mb-6">
       <div>
@@ -51,7 +71,7 @@
       </div>
       <div>
         <div class="mb-4">
-          <button class="btn" @click.prevent="getResultatNaif2()">
+          <button class="btn btn-ternary" @click.prevent="getResultatNaif2()">
             Récursif naïf 2
           </button>
         </div>

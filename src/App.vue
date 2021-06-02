@@ -39,4 +39,8 @@ button.btn-secondary {
 button.btn-primary {
   @apply border-2 border-black rounded-full bg-primary-400 px-4 py-2 font-bold text-black hover:bg-primary-300 transition focus:outline-none focus:bg-primary-200 hover:shadow-md focus:shadow-md transform hover:-translate-y-1 focus:ring-4 focus:ring-primary-400;
 }
+
+button.btn-ternary {
+  @apply border-2 border-black rounded-full bg-yellow-400 px-4 py-2 font-bold text-black hover:bg-yellow-300 transition focus:outline-none focus:bg-yellow-200 hover:shadow-md focus:shadow-md transform hover:-translate-y-1 focus:ring-4 focus:ring-yellow-400;
+}
 </style>

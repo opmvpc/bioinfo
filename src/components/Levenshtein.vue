@@ -31,6 +31,10 @@
           class="form-input"
           v-model="chaine1"
         />
+        <span class="text-sm text-gray-500"
+          ><span class="font-bold">{{ chaine1.trim().length }}</span>
+          caractères</span
+        >
       </div>
       <div class="mb-4">
         <label for="chaine2">Chaine de caractères 2</label>
@@ -41,6 +45,10 @@
           class="form-input"
           v-model="chaine2"
         />
+        <span class="text-sm text-gray-500"
+          ><span class="font-bold">{{ chaine2.trim().length }}</span>
+          caractères</span
+        >
       </div>
       <div class="mb-4">
         <label for="chaine2">Vitesse de l'animation</label>
