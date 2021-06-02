@@ -1,134 +1,180 @@
 <template>
-  <div class="prose">
-    <h1>Distance de Levenshtein: Benchmark</h1>
+  <div class="grid grid-cols-1 xl:grid-cols-2 gap-8">
+    <div class="prose">
+      <h1>Distance de Levenshtein: Benchmark</h1>
 
-    Test des 3 algorithmes suivants:
-    <ul>
-      <li>Récursif naif</li>
-      <li>Récursif mémoïsation</li>
-      <li>Itératif backtracking</li>
-    </ul>
-    <h2>Exemple:</h2>
-    <h3>Input:</h3>
-    <div class="bg-gray-300 p-4">
-      CAATCCAAC CATTTCACC
-    </div>
-    <h3>Output:</h3>
-    <div class="bg-gray-300 p-4">
-      3
-    </div>
-    <hr />
-    <div class="mb-4">
-      <label for="chaine1">Chaine de caractères 1</label>
-      <input
-        type="text"
-        id="chaine1"
-        name="chaine1"
-        class="form-input"
-        v-model="chaine1"
-      />
-      <span class="text-sm text-gray-500"
-        ><span class="font-bold">{{ chaine1.trim().length }}</span>
-        caractères</span
-      >
-    </div>
-    <div class="mb-4">
-      <label for="chaine2">Chaine de caractères 2</label>
-      <input
-        type="text"
-        id="chaine2"
-        name="chaine2"
-        class="form-input"
-        v-model="chaine2"
-      />
-      <span class="text-sm text-gray-500"
-        ><span class="font-bold">{{ chaine2.trim().length }}</span>
-        caractères</span
-      >
-    </div>
-    <div class="flex flex-col space-y-8 mt-12 mb-6">
-      <div>
-        <div class="mb-4">
-          <button class="btn" @click.prevent="getResultatNaif()">
-            Récursif naïf 1
-          </button>
+      Test des 3 algorithmes suivants:
+      <ul>
+        <li>Récursif naif</li>
+        <li>Récursif mémoïsation</li>
+        <li>Itératif backtracking</li>
+      </ul>
+      <h2>Exemple:</h2>
+      <h3>Input:</h3>
+      <div class="bg-gray-300 p-4">
+        CAATCCAAC CATTTCACC
+      </div>
+      <h3>Output:</h3>
+      <div class="bg-gray-300 p-4">
+        3
+      </div>
+      <hr />
+      <div class="mb-4">
+        <label for="chaine1">Chaine de caractères 1</label>
+        <input
+          type="text"
+          id="chaine1"
+          name="chaine1"
+          class="form-input"
+          v-model="chaine1"
+        />
+        <span class="text-sm text-gray-500"
+          ><span class="font-bold">{{ chaine1.trim().length }}</span>
+          caractères</span
+        >
+      </div>
+      <div class="mb-4">
+        <label for="chaine2">Chaine de caractères 2</label>
+        <input
+          type="text"
+          id="chaine2"
+          name="chaine2"
+          class="form-input"
+          v-model="chaine2"
+        />
+        <span class="text-sm text-gray-500"
+          ><span class="font-bold">{{ chaine2.trim().length }}</span>
+          caractères</span
+        >
+      </div>
+      <div class="mb-4">
+        <label for="chaine2">Nombre d'itérations</label>
+        <input
+          type="range"
+          min="1"
+          max="100"
+          v-model="iterations"
+          id="iterations-input"
+          class="form-input"
+        />
+        <span>{{ iterations }} itérations</span>
+      </div>
+      <div class="flex flex-col space-y-8 mt-12 mb-6">
+        <div>
+          <div class="mb-4">
+            <button class="btn" @click.prevent="getResultatNaif()">
+              {{ algoName("naif") }}
+            </button>
+          </div>
+          <div class="mb-4">
+            <label for="resultat-naif"
+              >Résultat {{ algoName("naif") }} (modification des strings)</label
+            >
+            <input
+              type="number"
+              id="resultat-naif"
+              class="form-input"
+              v-model="resultatNaif"
+              readonly
+            />
+          </div>
+          <div v-show="tempsResultatNaif">
+            {{ tempsResultatNaif }}
+          </div>
         </div>
-        <div class="mb-4">
-          <label for="resultat-naif"
-            >Résultat récursif naïf 1 (modification des strings)</label
-          >
-          <input
-            type="number"
-            id="resultat-naif"
-            class="form-input"
-            v-model="resultatNaif"
-            readonly
-          />
+        <div>
+          <div class="mb-4">
+            <button class="btn btn-ternary" @click.prevent="getResultatNaif2()">
+              {{ algoName("naif2") }}
+            </button>
+          </div>
+          <div class="mb-4">
+            <label for="resultat-naif"
+              >Résultat {{ algoName("naif2") }} (indices en paramètres)</label
+            >
+            <input
+              type="number"
+              id="resultat-naif"
+              class="form-input"
+              v-model="resultatNaif2"
+              readonly
+            />
+          </div>
+          <div v-show="tempsResultatNaif2">
+            {{ tempsResultatNaif2 }}
+          </div>
         </div>
-        <div v-show="tempsResultatNaif">
-          {{ tempsResultatNaif }}
+        <div>
+          <div class="mb-4">
+            <button
+              class="btn-primary"
+              @click.prevent="getResultatMemoization()"
+            >
+              {{ algoName("memo") }}
+            </button>
+          </div>
+          <div class="mb-4">
+            <label for="resultat-memo">Résultat {{ algoName("memo") }} </label>
+            <input
+              type="number"
+              id="resultat-memo"
+              class="form-input"
+              v-model="resultatMemo"
+              readonly
+            />
+          </div>
+          <div v-if="tempsResultatMemo">
+            {{ tempsResultatMemo }}
+          </div>
+        </div>
+        <div>
+          <div class="mb-4">
+            <button class="btn-secondary" @click.prevent="getResultatIter()">
+              {{ algoName("iter") }}
+            </button>
+          </div>
+          <div class="mb-4">
+            <label for="resultat-iter">Résultat {{ algoName("iter") }} </label>
+            <input
+              type="number"
+              id="resultat-iter"
+              class="form-input"
+              v-model="resultatIter"
+              readonly
+            />
+          </div>
+          <div v-if="tempsResultatIter">
+            {{ tempsResultatIter }}
+          </div>
         </div>
       </div>
-      <div>
-        <div class="mb-4">
-          <button class="btn btn-ternary" @click.prevent="getResultatNaif2()">
-            Récursif naïf 2
-          </button>
+    </div>
+  </div>
+  <div class="prose">
+    <div v-for="(type, indexType) in temps" :key="indexType">
+      <div v-show="type.length > 0">
+        <h3>{{ algoName(indexType) }}</h3>
+        <div class="grid grid-cols-10 gap-8 uppercase font-bold py-2">
+          <div class="col-span-2 text-right">Itération</div>
+          <div class="col-span-8">Temps</div>
         </div>
-        <div class="mb-4">
-          <label for="resultat-naif"
-            >Résultat récursif naïf 2 (indices en paramètres)</label
-          >
-          <input
-            type="number"
-            id="resultat-naif"
-            class="form-input"
-            v-model="resultatNaif2"
-            readonly
-          />
+        <div
+          class="grid grid-cols-10 gap-8"
+          v-for="(unTemps, indexTemps) in type"
+          :key="indexTemps"
+        >
+          <div class="col-span-2 text-right text-gray-400">
+            #{{ indexTemps + 1 }}
+          </div>
+          <div class="col-span-8">{{ affichageTemps(unTemps) }}</div>
         </div>
-        <div v-show="tempsResultatNaif2">
-          {{ tempsResultatNaif2 }}
-        </div>
-      </div>
-      <div>
-        <div class="mb-4">
-          <button class="btn-primary" @click.prevent="getResultatMemoization()">
-            Récursif mémoïsation
-          </button>
-        </div>
-        <div class="mb-4">
-          <label for="resultat-memo">Résultat récursif mémoïsation</label>
-          <input
-            type="number"
-            id="resultat-memo"
-            class="form-input"
-            v-model="resultatMemo"
-            readonly
-          />
-        </div>
-        <div v-if="tempsResultatMemo">
-          {{ tempsResultatMemo }}
-        </div>
-      </div>
-      <div>
-        <div class="mb-4">
-          <button class="btn-secondary" @click.prevent="getResultatIter()">
-            Itératif backtracking
-          </button>
-        </div>
-        <div class="mb-4">
-          <label for="resultat-iter">Résultat itératif backtracking</label>
-          <input
-            type="number"
-            id="resultat-iter"
-            class="form-input"
-            v-model="resultatIter"
-            readonly
-          />
-        </div>
-        <div v-if="tempsResultatIter">
-          {{ tempsResultatIter }}
+        <div
+          class="grid grid-cols-10 gap-8 uppercase font-bold py-2 text-primary-500"
+        >
+          <div class="col-span-2 text-right">Moyenne</div>
+          <div class="col-span-8 ">
+            {{ moyenneTemps(type) }}
+          </div>
         </div>
       </div>
     </div>
@@ -148,10 +194,33 @@ export default {
       resultatMemo: "",
       tempsResultatMemo: 0,
       resultatIter: "",
-      tempsResultatIter: 0
+      tempsResultatIter: 0,
+      iterations: 5,
+      temps: {
+        naif: [],
+        naif2: [],
+        memo: [],
+        iter: []
+      }
     };
   },
   methods: {
+    moyenneTemps(temps) {
+      let moyenne = 0;
+      if (temps.length !== 0) {
+        moyenne = temps.reduce((a, b) => a + b) / temps.length;
+      }
+      return this.affichageTemps(moyenne);
+    },
+    algoName(type) {
+      const names = {
+        naif: "Récursif naïf 1",
+        naif2: "Récursif naïf 2",
+        memo: "Récursif mémoïsation",
+        iter: "Récursif backtracking"
+      };
+      return names[type];
+    },
     async getResultatNaif() {
       await this.calculerLenvenshteinDistance("naif").then(
         this.successCallback,
@@ -179,47 +248,53 @@ export default {
     calculerLenvenshteinDistance(type) {
       return new Promise((successCallback, failureCallback) => {
         console.log("...");
-        const t0 = performance.now();
         let resultat = 0;
 
-        if (type === "naif") {
-          resultat = this.levensteinRec(this.chaine1, this.chaine2);
-        } else if (type === "naif2") {
-          resultat = this.levensteinNaif2(
-            this.chaine1,
-            this.chaine2,
-            this.chaine1.length,
-            this.chaine2.length
-          );
-        } else if (type === "memo") {
-          let matrix = new Array(this.chaine1.length + 1)
-            .fill(-1)
-            .map(() => new Array(this.chaine2.length + 1).fill(-1));
-          resultat = this.levensteinMemo(
-            this.chaine1,
-            this.chaine2,
-            this.chaine1.length,
-            this.chaine2.length,
-            matrix
-          );
-        } else if (type === "iter") {
-          resultat = this.levensteinIter(this.chaine1, this.chaine2);
+        let t0;
+        let t1;
+        for (let i = 0; i < this.iterations; i++) {
+          t0 = performance.now();
+          if (type === "naif") {
+            resultat = this.levensteinRec(this.chaine1, this.chaine2);
+          } else if (type === "naif2") {
+            resultat = this.levensteinNaif2(
+              this.chaine1,
+              this.chaine2,
+              this.chaine1.length,
+              this.chaine2.length
+            );
+          } else if (type === "memo") {
+            let matrix = new Array(this.chaine1.length + 1)
+              .fill(-1)
+              .map(() => new Array(this.chaine2.length + 1).fill(-1));
+            resultat = this.levensteinMemo(
+              this.chaine1,
+              this.chaine2,
+              this.chaine1.length,
+              this.chaine2.length,
+              matrix
+            );
+          } else if (type === "iter") {
+            resultat = this.levensteinIter(this.chaine1, this.chaine2);
+          }
+          t1 = performance.now();
+
+          this.temps[type].push(t1 - t0);
         }
-        const t1 = performance.now();
 
         if (Number.isInteger(resultat)) {
           if (type === "naif") {
             this.resultatNaif = resultat;
-            this.tempsResultatNaif = this.affichageTemps(t0, t1);
+            this.tempsResultatNaif = this.affichageTemps(t1 - t0);
           } else if (type === "naif2") {
             this.resultatNaif2 = resultat;
-            this.tempsResultatNaif2 = this.affichageTemps(t0, t1);
+            this.tempsResultatNaif2 = this.affichageTemps(t1 - t0);
           } else if (type === "memo") {
             this.resultatMemo = resultat;
-            this.tempsResultatMemo = this.affichageTemps(t0, t1);
+            this.tempsResultatMemo = this.affichageTemps(t1 - t0);
           } else if (type === "iter") {
             this.resultatIter = resultat;
-            this.tempsResultatIter = this.affichageTemps(t0, t1);
+            this.tempsResultatIter = this.affichageTemps(t1 - t0);
           }
 
           successCallback(resultat);
@@ -294,8 +369,7 @@ export default {
       cache[m][n] = min;
       return min;
     },
-    affichageTemps(t0, t1) {
-      const temps = t1 - t0;
+    affichageTemps(temps) {
       if (temps > 1000) {
         return temps / 1000 + " secondes";
       } else {
