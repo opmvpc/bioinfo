@@ -208,10 +208,10 @@
       <div class="prose">
         <h2>Graphique</h2>
       </div>
-      <div id="chart">
+      <div id="chart" class="h-full">
         <apexchart
           type="scatter"
-          height="500"
+          height="1000"
           :options="chartOptions"
           :series="temps"
         ></apexchart>
@@ -290,7 +290,7 @@ export default {
         naif: "Récursif naïf 1",
         naif2: "Récursif naïf 2",
         memo: "Récursif mémoïsation",
-        iter: "Récursif backtracking"
+        iter: "Itératif backtracking"
       };
       return names[type];
     },
@@ -506,7 +506,7 @@ export default {
   mounted() {
     this.chartOptions = {
       chart: {
-        height: 500,
+        height: 1000,
         type: "scatter",
         zoom: {
           enabled: true,
@@ -514,6 +514,9 @@ export default {
         }
       },
       xaxis: {
+        title: {
+          text: "Chaines comparées"
+        },
         tickAmount: 10,
         min: 0,
         max: 10,
@@ -530,6 +533,9 @@ export default {
         }
       },
       yaxis: {
+        title: {
+          text: "Temps (ms)"
+        },
         tickAmount: 7,
         labels: {
           formatter: function(val) {
