@@ -189,16 +189,18 @@ export default {
             this.chaine1,
             this.chaine2,
             this.chaine1.length,
-            this.chaine2.length,
-            []
+            this.chaine2.length
           );
         } else if (type === "memo") {
+          let matrix = new Array(this.chaine1.length + 1)
+            .fill(-1)
+            .map(() => new Array(this.chaine2.length + 1).fill(-1));
           resultat = this.levensteinMemo(
             this.chaine1,
             this.chaine2,
             this.chaine1.length,
             this.chaine2.length,
-            []
+            matrix
           );
         } else if (type === "iter") {
           resultat = this.levensteinIter(this.chaine1, this.chaine2);
@@ -233,6 +235,7 @@ export default {
       console.error("L'opération a échoué avec le message : " + erreur);
     },
     levensteinRec(a, b) {
+      // Source: https://www.codementor.io/tips/6243778211/javascript-algorithms-levenshtein-s-distance-for-string-conversion
       if (!b.length) return a.length;
       if (!a.length) return b.length;
 
@@ -242,47 +245,54 @@ export default {
         this.levensteinRec(a.slice(1), b.slice(1)) + (a[0] == b[0] ? 0 : 1)
       );
     },
-    levensteinNaif2(chaine1, chaine2, m, n, cache) {
-      if (m == 0) {
+    levensteinNaif2(chaine1, chaine2, m, n) {
+      // Source: https://www.geeksforgeeks.org/edit-distance-dp-using-memoization/
+      if (m === 0) {
         return n;
       }
 
-      if (n == 0) {
+      if (n === 0) {
         return m;
       }
 
-      if (chaine1[m - 1] == chaine2[n - 1]) {
-        return this.levensteinMemo(chaine1, chaine2, m - 1, n - 1);
+      if (chaine1[m - 1] === chaine2[n - 1]) {
+        return this.levensteinNaif2(chaine1, chaine2, m - 1, n - 1);
       }
 
-      return (
+      const min =
         Math.min(
-          this.levensteinMemo(chaine1, chaine2, m, n - 1, cache), // insert
-          this.levensteinMemo(chaine1, chaine2, m - 1, n, cache), // remove
-          this.levensteinMemo(chaine1, chaine2, m - 1, n - 1, cache) // replace
-        ) + 1
-      );
+          this.levensteinNaif2(chaine1, chaine2, m, n - 1), // insert
+          this.levensteinNaif2(chaine1, chaine2, m - 1, n), // remove
+          this.levensteinNaif2(chaine1, chaine2, m - 1, n - 1) // replace
+        ) + 1;
+      return min;
     },
     levensteinMemo(chaine1, chaine2, m, n, cache) {
-      if (m == 0) {
+      // Source: https://www.geeksforgeeks.org/edit-distance-dp-using-memoization/
+      if (m === 0) {
         return n;
       }
 
-      if (n == 0) {
+      if (n === 0) {
         return m;
       }
-
-      if (chaine1[m - 1] == chaine2[n - 1]) {
-        return this.levensteinMemo(chaine1, chaine2, m - 1, n - 1);
+      if (cache[m][n] !== -1) {
+        return cache[m][n];
       }
 
-      return (
+      if (chaine1[m - 1] === chaine2[n - 1]) {
+        cache[m][n] = cache[m - 1][n - 1];
+        return this.levensteinMemo(chaine1, chaine2, m - 1, n - 1, cache);
+      }
+
+      const min =
         Math.min(
           this.levensteinMemo(chaine1, chaine2, m, n - 1, cache), // insert
           this.levensteinMemo(chaine1, chaine2, m - 1, n, cache), // remove
           this.levensteinMemo(chaine1, chaine2, m - 1, n - 1, cache) // replace
-        ) + 1
-      );
+        ) + 1;
+      cache[m][n] = min;
+      return min;
     },
     affichageTemps(t0, t1) {
       const temps = t1 - t0;
@@ -293,6 +303,7 @@ export default {
       }
     },
     levensteinIter(chaine1, chaine2) {
+      // Source: https://en.wikipedia.org/wiki/Levenshtein_distance
       const tailleChaine1 = chaine1.length + 1;
       const tailleChaine2 = chaine2.length + 1;
 
