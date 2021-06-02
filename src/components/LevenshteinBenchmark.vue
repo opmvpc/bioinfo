@@ -4,11 +4,12 @@
       <div class="prose">
         <h1>Distance de Levenshtein: Benchmark</h1>
 
-        Test des 3 algorithmes suivants:
+        Test des 4 algorithmes suivants:
         <ul>
-          <li>Récursif naif</li>
+          <li>Récursif naif 1</li>
+          <li>Récursif naif 2</li>
           <li>Récursif mémoïsation</li>
-          <li>Itératif backtracking</li>
+          <li>Itératif (bottom-up)</li>
         </ul>
         <h2>Exemple:</h2>
         <h3>Input:</h3>
@@ -290,7 +291,7 @@ export default {
         naif: "Récursif naïf 1",
         naif2: "Récursif naïf 2",
         memo: "Récursif mémoïsation",
-        iter: "Itératif backtracking"
+        iter: "Itératif (bottom-up)"
       };
       return names[type];
     },
