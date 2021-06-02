@@ -69,33 +69,35 @@
       </div>
     </div>
     <div>
-      <div class="mt-12 xl:mt-0" v-show="resultMatrix.length > 0">
+      <div class="mt-12 xl:mt-0 w-full" v-show="resultMatrix.length > 0">
         <div class="prose">
           <h2>Résultat</h2>
         </div>
-        <table ref="matrix">
-          <tr v-for="(row, indexRow) in resultMatrix" :key="indexRow">
-            <td
-              v-for="(col, indexCol) in resultMatrix[indexRow]"
-              :key="indexCol"
-              :class="[
-                indexRow === 0 || indexCol === 0 ? 'char' : '',
-                (indexRow !== 1 || indexCol !== 1) &&
-                resultMatrix[indexRow][indexCol].type !== 'init' &&
-                indexRow === indexCol
-                  ? 'underline'
-                  : '',
-                indexRow === resultMatrix.length - 1 &&
-                indexCol === resultMatrix[0].length - 1 &&
-                resultMatrix[indexRow][indexCol].type !== 'init'
-                  ? 'bg-yellow-200 text-yellow-700'
-                  : ''
-              ]"
-            >
-              {{ resultMatrix[indexRow][indexCol].value }}
-            </td>
-          </tr>
-        </table>
+        <div class="overflow-x-scroll sm:overflow-hidden">
+          <table ref="matrix">
+            <tr v-for="(row, indexRow) in resultMatrix" :key="indexRow">
+              <td
+                v-for="(col, indexCol) in resultMatrix[indexRow]"
+                :key="indexCol"
+                :class="[
+                  indexRow === 0 || indexCol === 0 ? 'char' : '',
+                  (indexRow !== 1 || indexCol !== 1) &&
+                  resultMatrix[indexRow][indexCol].type !== 'init' &&
+                  indexRow === indexCol
+                    ? 'underline'
+                    : '',
+                  indexRow === resultMatrix.length - 1 &&
+                  indexCol === resultMatrix[0].length - 1 &&
+                  resultMatrix[indexRow][indexCol].type !== 'init'
+                    ? 'bg-yellow-200 text-yellow-700'
+                    : ''
+                ]"
+              >
+                {{ resultMatrix[indexRow][indexCol].value }}
+              </td>
+            </tr>
+          </table>
+        </div>
 
         <div class="text-gray-600 mt-2">
           Itération <span class="font-bold">{{ iteration }}</span> sur
@@ -247,7 +249,7 @@ export default {
 
 <style lang="postcss" scoped>
 table {
-  @apply inline-flex border-4 border-app-200 mt-4;
+  @apply flex border-4 border-app-200 mt-4 w-min;
 }
 td {
   @apply flex items-center justify-center text-2xl 2xl:text-4xl border-4 border-app-200 shadow-inner h-12 w-12 2xl:h-16 2xl:w-16 text-center font-mono;
