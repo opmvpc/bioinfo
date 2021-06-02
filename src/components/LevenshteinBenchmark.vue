@@ -1,190 +1,344 @@
 <template>
-  <div class="grid grid-cols-1 xl:grid-cols-2 gap-8">
-    <div class="prose">
-      <h1>Distance de Levenshtein: Benchmark</h1>
+  <div>
+    <div class="grid grid-cols-1 xl:grid-cols-2 gap-8">
+      <div class="prose">
+        <h1>Distance de Levenshtein: Benchmark</h1>
 
-      Test des 3 algorithmes suivants:
-      <ul>
-        <li>Récursif naif</li>
-        <li>Récursif mémoïsation</li>
-        <li>Itératif backtracking</li>
-      </ul>
-      <h2>Exemple:</h2>
-      <h3>Input:</h3>
-      <div class="bg-gray-300 p-4">
-        CAATCCAAC CATTTCACC
-      </div>
-      <h3>Output:</h3>
-      <div class="bg-gray-300 p-4">
-        3
-      </div>
-      <hr />
-      <div class="mb-4">
-        <label for="chaine1">Chaine de caractères 1</label>
-        <input
-          type="text"
-          id="chaine1"
-          name="chaine1"
-          class="form-input"
-          v-model="chaine1"
-        />
-        <span class="text-sm text-gray-500"
-          ><span class="font-bold">{{ chaine1.trim().length }}</span>
-          caractères</span
-        >
-      </div>
-      <div class="mb-4">
-        <label for="chaine2">Chaine de caractères 2</label>
-        <input
-          type="text"
-          id="chaine2"
-          name="chaine2"
-          class="form-input"
-          v-model="chaine2"
-        />
-        <span class="text-sm text-gray-500"
-          ><span class="font-bold">{{ chaine2.trim().length }}</span>
-          caractères</span
-        >
-      </div>
-      <div class="mb-4">
-        <label for="chaine2">Nombre d'itérations</label>
-        <input
-          type="range"
-          min="1"
-          max="100"
-          v-model="iterations"
-          id="iterations-input"
-          class="form-input"
-        />
-        <span>{{ iterations }} itérations</span>
-      </div>
-      <div class="flex flex-col space-y-8 mt-12 mb-6">
-        <div>
-          <div class="mb-4">
-            <button class="btn" @click.prevent="getResultatNaif()">
-              {{ algoName("naif") }}
-            </button>
+        Test des 3 algorithmes suivants:
+        <ul>
+          <li>Récursif naif</li>
+          <li>Récursif mémoïsation</li>
+          <li>Itératif backtracking</li>
+        </ul>
+        <h2>Exemple:</h2>
+        <h3>Input:</h3>
+        <div class="bg-gray-300 p-4">
+          CAATCCAAC CATTTCACC
+        </div>
+        <h3>Output:</h3>
+        <div class="bg-gray-300 p-4">
+          3
+        </div>
+        <hr />
+        <div class="mb-4">
+          <label for="chaine1">Chaine de caractères 1</label>
+          <input
+            type="text"
+            id="chaine1"
+            name="chaine1"
+            class="form-input"
+            v-model="chaine1"
+          />
+          <span class="text-sm text-gray-500"
+            ><span class="font-bold">{{ chaine1.trim().length }}</span>
+            caractères</span
+          >
+        </div>
+        <div class="mb-4">
+          <label for="chaine2">Chaine de caractères 2</label>
+          <input
+            type="text"
+            id="chaine2"
+            name="chaine2"
+            class="form-input"
+            v-model="chaine2"
+          />
+          <span class="text-sm text-gray-500"
+            ><span class="font-bold">{{ chaine2.trim().length }}</span>
+            caractères</span
+          >
+        </div>
+        <div class="mb-4">
+          <label for="chaine2">Nombre d'itérations</label>
+          <input
+            type="range"
+            min="1"
+            max="100"
+            v-model="iterations"
+            id="iterations-input"
+            class="form-input"
+          />
+          <span>{{ iterations }} itérations</span>
+        </div>
+        <div class="flex flex-col space-y-8 mt-12 mb-6">
+          <div>
+            <div class="mb-4">
+              <button class="btn" @click.prevent="getResultatNaif()">
+                {{ algoName("naif") }}
+              </button>
+            </div>
+            <div class="mb-4">
+              <label for="resultat-naif"
+                >Résultat {{ algoName("naif") }} (modification des
+                strings)</label
+              >
+              <input
+                type="number"
+                id="resultat-naif"
+                class="form-input"
+                v-model="resultatNaif"
+                readonly
+              />
+            </div>
+            <div v-show="tempsResultatNaif">
+              {{ tempsResultatNaif }}
+            </div>
           </div>
-          <div class="mb-4">
-            <label for="resultat-naif"
-              >Résultat {{ algoName("naif") }} (modification des strings)</label
-            >
-            <input
-              type="number"
-              id="resultat-naif"
-              class="form-input"
-              v-model="resultatNaif"
-              readonly
-            />
+          <div>
+            <div class="mb-4">
+              <button
+                class="btn btn-ternary"
+                @click.prevent="getResultatNaif2()"
+              >
+                {{ algoName("naif2") }}
+              </button>
+            </div>
+            <div class="mb-4">
+              <label for="resultat-naif"
+                >Résultat {{ algoName("naif2") }} (indices en paramètres)</label
+              >
+              <input
+                type="number"
+                id="resultat-naif"
+                class="form-input"
+                v-model="resultatNaif2"
+                readonly
+              />
+            </div>
+            <div v-show="tempsResultatNaif2">
+              {{ tempsResultatNaif2 }}
+            </div>
           </div>
-          <div v-show="tempsResultatNaif">
-            {{ tempsResultatNaif }}
+          <div>
+            <div class="mb-4">
+              <button
+                class="btn-primary"
+                @click.prevent="getResultatMemoization()"
+              >
+                {{ algoName("memo") }}
+              </button>
+            </div>
+            <div class="mb-4">
+              <label for="resultat-memo"
+                >Résultat {{ algoName("memo") }}
+              </label>
+              <input
+                type="number"
+                id="resultat-memo"
+                class="form-input"
+                v-model="resultatMemo"
+                readonly
+              />
+            </div>
+            <div v-if="tempsResultatMemo">
+              {{ tempsResultatMemo }}
+            </div>
+          </div>
+          <div>
+            <div class="mb-4">
+              <button class="btn-secondary" @click.prevent="getResultatIter()">
+                {{ algoName("iter") }}
+              </button>
+            </div>
+            <div class="mb-4">
+              <label for="resultat-iter"
+                >Résultat {{ algoName("iter") }}
+              </label>
+              <input
+                type="number"
+                id="resultat-iter"
+                class="form-input"
+                v-model="resultatIter"
+                readonly
+              />
+            </div>
+            <div v-if="tempsResultatIter">
+              {{ tempsResultatIter }}
+            </div>
           </div>
         </div>
-        <div>
-          <div class="mb-4">
-            <button class="btn btn-ternary" @click.prevent="getResultatNaif2()">
-              {{ algoName("naif2") }}
-            </button>
-          </div>
-          <div class="mb-4">
-            <label for="resultat-naif"
-              >Résultat {{ algoName("naif2") }} (indices en paramètres)</label
+      </div>
+      <div class="prose">
+        <div v-for="(type, indexType) in temps" :key="indexType">
+          <div v-show="type.length > 0">
+            <h3>{{ algoName(indexType) }}</h3>
+            <div class="grid grid-cols-10 gap-8 uppercase font-bold py-2">
+              <div class="col-span-2 text-right">Itération</div>
+              <div class="col-span-8">Temps</div>
+            </div>
+            <div
+              class="grid grid-cols-10 gap-8"
+              v-for="(unTemps, indexTemps) in type"
+              :key="indexTemps"
             >
-            <input
-              type="number"
-              id="resultat-naif"
-              class="form-input"
-              v-model="resultatNaif2"
-              readonly
-            />
-          </div>
-          <div v-show="tempsResultatNaif2">
-            {{ tempsResultatNaif2 }}
-          </div>
-        </div>
-        <div>
-          <div class="mb-4">
-            <button
-              class="btn-primary"
-              @click.prevent="getResultatMemoization()"
+              <div class="col-span-2 text-right text-gray-400">
+                #{{ indexTemps + 1 }}
+              </div>
+              <div class="col-span-8">{{ affichageTemps(unTemps) }}</div>
+            </div>
+            <div
+              class="grid grid-cols-10 gap-8 uppercase font-bold py-2 text-primary-500"
             >
-              {{ algoName("memo") }}
-            </button>
-          </div>
-          <div class="mb-4">
-            <label for="resultat-memo">Résultat {{ algoName("memo") }} </label>
-            <input
-              type="number"
-              id="resultat-memo"
-              class="form-input"
-              v-model="resultatMemo"
-              readonly
-            />
-          </div>
-          <div v-if="tempsResultatMemo">
-            {{ tempsResultatMemo }}
-          </div>
-        </div>
-        <div>
-          <div class="mb-4">
-            <button class="btn-secondary" @click.prevent="getResultatIter()">
-              {{ algoName("iter") }}
-            </button>
-          </div>
-          <div class="mb-4">
-            <label for="resultat-iter">Résultat {{ algoName("iter") }} </label>
-            <input
-              type="number"
-              id="resultat-iter"
-              class="form-input"
-              v-model="resultatIter"
-              readonly
-            />
-          </div>
-          <div v-if="tempsResultatIter">
-            {{ tempsResultatIter }}
+              <div class="col-span-2 text-right">Moyenne</div>
+              <div class="col-span-8 ">
+                {{ moyenneTemps(type) }}
+              </div>
+            </div>
           </div>
         </div>
       </div>
     </div>
-  </div>
-  <div class="prose">
-    <div v-for="(type, indexType) in temps" :key="indexType">
-      <div v-show="type.length > 0">
-        <h3>{{ algoName(indexType) }}</h3>
-        <div class="grid grid-cols-10 gap-8 uppercase font-bold py-2">
-          <div class="col-span-2 text-right">Itération</div>
-          <div class="col-span-8">Temps</div>
-        </div>
-        <div
-          class="grid grid-cols-10 gap-8"
-          v-for="(unTemps, indexTemps) in type"
-          :key="indexTemps"
-        >
-          <div class="col-span-2 text-right text-gray-400">
-            #{{ indexTemps + 1 }}
-          </div>
-          <div class="col-span-8">{{ affichageTemps(unTemps) }}</div>
-        </div>
-        <div
-          class="grid grid-cols-10 gap-8 uppercase font-bold py-2 text-primary-500"
-        >
-          <div class="col-span-2 text-right">Moyenne</div>
-          <div class="col-span-8 ">
-            {{ moyenneTemps(type) }}
-          </div>
-        </div>
-      </div>
+    <div id="chart">
+      <apexchart
+        type="scatter"
+        height="500"
+        :options="chartOptions"
+        :series="series"
+      ></apexchart>
     </div>
   </div>
 </template>
 
 <script>
+import VueApexCharts from "vue3-apexcharts";
+
 export default {
+  components: {
+    apexchart: VueApexCharts
+  },
   data: () => {
     return {
+      series: [
+        {
+          name: "SAMPLE A",
+          data: [
+            [16.4, 5.4],
+            [21.7, 2],
+            [25.4, 3],
+            [19, 2],
+            [10.9, 1],
+            [13.6, 3.2],
+            [10.9, 7.4],
+            [10.9, 0],
+            [10.9, 8.2],
+            [16.4, 0],
+            [16.4, 1.8],
+            [13.6, 0.3],
+            [13.6, 0],
+            [29.9, 0],
+            [27.1, 2.3],
+            [16.4, 0],
+            [13.6, 3.7],
+            [10.9, 5.2],
+            [16.4, 6.5],
+            [10.9, 0],
+            [24.5, 7.1],
+            [10.9, 0],
+            [8.1, 4.7],
+            [19, 0],
+            [21.7, 1.8],
+            [27.1, 0],
+            [24.5, 0],
+            [27.1, 0],
+            [29.9, 1.5],
+            [27.1, 0.8],
+            [22.1, 2]
+          ]
+        },
+        {
+          name: "SAMPLE B",
+          data: [
+            [36.4, 13.4],
+            [1.7, 11],
+            [5.4, 8],
+            [9, 17],
+            [1.9, 4],
+            [3.6, 12.2],
+            [1.9, 14.4],
+            [1.9, 9],
+            [1.9, 13.2],
+            [1.4, 7],
+            [6.4, 8.8],
+            [3.6, 4.3],
+            [1.6, 10],
+            [9.9, 2],
+            [7.1, 15],
+            [1.4, 0],
+            [3.6, 13.7],
+            [1.9, 15.2],
+            [6.4, 16.5],
+            [0.9, 10],
+            [4.5, 17.1],
+            [10.9, 10],
+            [0.1, 14.7],
+            [9, 10],
+            [12.7, 11.8],
+            [2.1, 10],
+            [2.5, 10],
+            [27.1, 10],
+            [2.9, 11.5],
+            [7.1, 10.8],
+            [2.1, 12]
+          ]
+        },
+        {
+          name: "SAMPLE C",
+          data: [
+            [21.7, 3],
+            [23.6, 3.5],
+            [24.6, 3],
+            [29.9, 3],
+            [21.7, 20],
+            [23, 2],
+            [10.9, 3],
+            [28, 4],
+            [27.1, 0.3],
+            [16.4, 4],
+            [13.6, 0],
+            [19, 5],
+            [22.4, 3],
+            [24.5, 3],
+            [32.6, 3],
+            [27.1, 4],
+            [29.6, 6],
+            [31.6, 8],
+            [21.6, 5],
+            [20.9, 4],
+            [22.4, 0],
+            [32.6, 10.3],
+            [29.7, 20.8],
+            [24.5, 0.8],
+            [21.4, 0],
+            [21.7, 6.9],
+            [28.6, 7.7],
+            [15.4, 0],
+            [18.1, 0],
+            [33.4, 0],
+            [16.4, 0]
+          ]
+        }
+      ],
+      chartOptions: {
+        chart: {
+          height: 350,
+          type: "scatter",
+          zoom: {
+            enabled: true,
+            type: "xy"
+          }
+        },
+        xaxis: {
+          tickAmount: 10,
+          labels: {
+            formatter: function(val) {
+              return parseFloat(val).toFixed(1);
+            }
+          }
+        },
+        yaxis: {
+          tickAmount: 7
+        }
+      },
       chaine1: "CAATCCAAC",
       chaine2: "CATTTCACC",
       resultatNaif: "",
