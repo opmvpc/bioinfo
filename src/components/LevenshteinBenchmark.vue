@@ -30,11 +30,13 @@
       <div>
         <div class="mb-4">
           <button class="btn" @click.prevent="getResultatNaif()">
-            Récursif naïf
+            Récursif naïf 1
           </button>
         </div>
         <div class="mb-4">
-          <label for="resultat-naif">Résultat récursif naïf</label>
+          <label for="resultat-naif"
+            >Résultat récursif naïf 1 (modification des strings)</label
+          >
           <input
             type="number"
             id="resultat-naif"
@@ -45,6 +47,28 @@
         </div>
         <div v-show="tempsResultatNaif">
           {{ tempsResultatNaif }}
+        </div>
+      </div>
+      <div>
+        <div class="mb-4">
+          <button class="btn" @click.prevent="getResultatNaif2()">
+            Récursif naïf 2
+          </button>
+        </div>
+        <div class="mb-4">
+          <label for="resultat-naif"
+            >Résultat récursif naïf 2 (indices en paramètres)</label
+          >
+          <input
+            type="number"
+            id="resultat-naif"
+            class="form-input"
+            v-model="resultatNaif2"
+            readonly
+          />
+        </div>
+        <div v-show="tempsResultatNaif2">
+          {{ tempsResultatNaif2 }}
         </div>
       </div>
       <div>
@@ -99,6 +123,8 @@ export default {
       chaine2: "CATTTCACC",
       resultatNaif: "",
       tempsResultatNaif: 0,
+      resultatNaif2: "",
+      tempsResultatNaif2: 0,
       resultatMemo: "",
       tempsResultatMemo: 0,
       resultatIter: "",
@@ -108,6 +134,12 @@ export default {
   methods: {
     async getResultatNaif() {
       await this.calculerLenvenshteinDistance("naif").then(
+        this.successCallback,
+        this.failureCallback
+      );
+    },
+    async getResultatNaif2() {
+      await this.calculerLenvenshteinDistance("naif2").then(
         this.successCallback,
         this.failureCallback
       );
@@ -132,8 +164,22 @@ export default {
 
         if (type === "naif") {
           resultat = this.levensteinRec(this.chaine1, this.chaine2);
+        } else if (type === "naif2") {
+          resultat = this.levensteinNaif2(
+            this.chaine1,
+            this.chaine2,
+            this.chaine1.length,
+            this.chaine2.length,
+            []
+          );
         } else if (type === "memo") {
-          resultat = this.levensteinMemo(this.chaine1, this.chaine2, []);
+          resultat = this.levensteinMemo(
+            this.chaine1,
+            this.chaine2,
+            this.chaine1.length,
+            this.chaine2.length,
+            []
+          );
         } else if (type === "iter") {
           resultat = this.levensteinIter(this.chaine1, this.chaine2);
         }
@@ -142,8 +188,10 @@ export default {
         if (Number.isInteger(resultat)) {
           if (type === "naif") {
             this.resultatNaif = resultat;
-
             this.tempsResultatNaif = this.affichageTemps(t0, t1);
+          } else if (type === "naif2") {
+            this.resultatNaif2 = resultat;
+            this.tempsResultatNaif2 = this.affichageTemps(t0, t1);
           } else if (type === "memo") {
             this.resultatMemo = resultat;
             this.tempsResultatMemo = this.affichageTemps(t0, t1);
@@ -174,14 +222,46 @@ export default {
         this.levensteinRec(a.slice(1), b.slice(1)) + (a[0] == b[0] ? 0 : 1)
       );
     },
-    levensteinMemo(a, b) {
-      if (!b.length) return a.length;
-      if (!a.length) return b.length;
+    levensteinNaif2(chaine1, chaine2, m, n, cache) {
+      if (m == 0) {
+        return n;
+      }
 
-      return Math.min(
-        this.levensteinRec(a.slice(1), b) + 1,
-        this.levensteinRec(b.slice(1), a) + 1,
-        this.levensteinRec(a.slice(1), b.slice(1)) + (a[0] == b[0] ? 0 : 1)
+      if (n == 0) {
+        return m;
+      }
+
+      if (chaine1[m - 1] == chaine2[n - 1]) {
+        return this.levensteinMemo(chaine1, chaine2, m - 1, n - 1);
+      }
+
+      return (
+        Math.min(
+          this.levensteinMemo(chaine1, chaine2, m, n - 1, cache), // insert
+          this.levensteinMemo(chaine1, chaine2, m - 1, n, cache), // remove
+          this.levensteinMemo(chaine1, chaine2, m - 1, n - 1, cache) // replace
+        ) + 1
+      );
+    },
+    levensteinMemo(chaine1, chaine2, m, n, cache) {
+      if (m == 0) {
+        return n;
+      }
+
+      if (n == 0) {
+        return m;
+      }
+
+      if (chaine1[m - 1] == chaine2[n - 1]) {
+        return this.levensteinMemo(chaine1, chaine2, m - 1, n - 1);
+      }
+
+      return (
+        Math.min(
+          this.levensteinMemo(chaine1, chaine2, m, n - 1, cache), // insert
+          this.levensteinMemo(chaine1, chaine2, m - 1, n, cache), // remove
+          this.levensteinMemo(chaine1, chaine2, m - 1, n - 1, cache) // replace
+        ) + 1
       );
     },
     affichageTemps(t0, t1) {
@@ -193,10 +273,12 @@ export default {
       }
     },
     levensteinIter(chaine1, chaine2) {
-      const tailleChaine1 = chaine1.length+1;
-      const tailleChaine2 = chaine2.length+1;
+      const tailleChaine1 = chaine1.length + 1;
+      const tailleChaine2 = chaine2.length + 1;
 
-      let matrix = new Array(tailleChaine1).fill(0).map(() => new Array(tailleChaine2).fill(0));
+      let matrix = new Array(tailleChaine1)
+        .fill(0)
+        .map(() => new Array(tailleChaine2).fill(0));
 
       for (let i = 1; i < tailleChaine1; i++) {
         matrix[i][0] = i;
@@ -209,22 +291,22 @@ export default {
       for (let j = 1; j < tailleChaine2; j++) {
         for (let i = 1; i < tailleChaine1; i++) {
           let substitutionCost;
-          if (chaine1.charAt(i-1) === chaine2.charAt(j-1)) {
+          if (chaine1.charAt(i - 1) === chaine2.charAt(j - 1)) {
             substitutionCost = 0;
           } else {
             substitutionCost = 1;
           }
 
           matrix[i][j] = Math.min(
-            matrix[i-1][j] + 1,
-            matrix[i][j-1] + 1,
-            matrix[i-1][j-1] + substitutionCost
-          )
+            matrix[i - 1][j] + 1,
+            matrix[i][j - 1] + 1,
+            matrix[i - 1][j - 1] + substitutionCost
+          );
         }
       }
 
-      return matrix[tailleChaine1-1][tailleChaine2-1]
-      }
+      return matrix[tailleChaine1 - 1][tailleChaine2 - 1];
+    }
   }
 };
 </script>

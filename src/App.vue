@@ -29,14 +29,14 @@ textarea.form-input {
 }
 
 button.btn {
-  @apply border-2 border-black rounded-full bg-lime-400 px-4 py-2 font-bold text-black hover:bg-lime-300 transition focus:outline-none;
+  @apply border-2 border-black rounded-full bg-lime-400 px-4 py-2 font-bold text-black hover:bg-lime-300 transition focus:outline-none focus:bg-lime-200 hover:shadow-md focus:shadow-md transform hover:-translate-y-1 focus:ring-4 focus:ring-lime-400;
 }
 
 button.btn-secondary {
-  @apply border-2 border-black rounded-full bg-secondary-400 px-4 py-2 font-bold text-black hover:bg-secondary-300 transition focus:outline-none;
+  @apply border-2 border-black rounded-full bg-secondary-400 px-4 py-2 font-bold text-black hover:bg-secondary-300 transition focus:outline-none focus:bg-secondary-200 hover:shadow-md focus:shadow-md transform hover:-translate-y-1 focus:ring-4 focus:ring-secondary-400;
 }
 
 button.btn-primary {
-  @apply border-2 border-black rounded-full bg-primary-400 px-4 py-2 font-bold text-black hover:bg-primary-300 transition focus:outline-none;
+  @apply border-2 border-black rounded-full bg-primary-400 px-4 py-2 font-bold text-black hover:bg-primary-300 transition focus:outline-none focus:bg-primary-200 hover:shadow-md focus:shadow-md transform hover:-translate-y-1 focus:ring-4 focus:ring-primary-400;
 }
 </style>

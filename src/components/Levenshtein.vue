@@ -70,12 +70,29 @@
             <td
               v-for="(col, indexCol) in resultMatrix[indexRow]"
               :key="indexCol"
-              :class="[indexRow === 0 || indexCol === 0 ? 'char' : '']"
+              :class="[
+                indexRow === 0 || indexCol === 0 ? 'char' : '',
+                (indexRow !== 1 || indexCol !== 1) &&
+                resultMatrix[indexRow][indexCol].type !== 'init' &&
+                indexRow === indexCol
+                  ? 'underline'
+                  : '',
+                indexRow === resultMatrix.length - 1 &&
+                indexCol === resultMatrix[0].length - 1 &&
+                resultMatrix[indexRow][indexCol].type !== 'init'
+                  ? 'bg-yellow-200 text-yellow-700'
+                  : ''
+              ]"
             >
-              {{ resultMatrix[indexRow][indexCol] }}
+              {{ resultMatrix[indexRow][indexCol].value }}
             </td>
           </tr>
         </table>
+
+        <div class="text-gray-600 mt-2">
+          Itération <span class="font-bold">{{ iteration }}</span> sur
+          <span class="font-bold">{{ iterationCount }}</span>
+        </div>
       </div>
     </div>
   </div>
@@ -89,7 +106,9 @@ export default {
       chaine2: "CATTTCACC",
       resultat: "",
       resultMatrix: [],
-      timer: 200
+      timer: 200,
+      iterationCount: 0,
+      iteration: 0
     };
   },
   methods: {
@@ -104,13 +123,16 @@ export default {
       setTimeout(() => {
         this.$refs.matrix.scrollIntoView({ behavior: "smooth" });
       }, 200);
+      this.iterationCount = operations.length;
+      this.iteration = 0;
       this.renderOperations(operations);
     },
     async renderOperations(operations) {
       const timer = ms => new Promise(res => setTimeout(res, ms));
-      for (let index = 0; index < operations.length; index++) {
+      for (let index = 0; index < this.iterationCount; index++) {
+        this.iteration += 1;
         const operation = operations[index];
-        this.resultMatrix[operation.y + 1][operation.x + 1] = operation.value;
+        this.resultMatrix[operation.y + 1][operation.x + 1] = operation;
         await timer(this.timer);
       }
     },
@@ -119,21 +141,21 @@ export default {
       for (let i = 0; i < matrix.length; i++) {
         matrix[i] = new Array(chaine1.length + 2);
         for (let j = 0; j < matrix[i].length; j++) {
-          matrix[i][j] = 0;
+          matrix[i][j] = { value: 0, type: "init" };
         }
       }
 
       // first line
-      matrix[0][0] = "";
-      matrix[0][1] = "";
-      matrix[1][0] = "";
+      matrix[0][0] = { value: "", type: "init" };
+      matrix[0][1] = { value: "", type: "init" };
+      matrix[1][0] = { value: "", type: "init" };
 
       for (let index = 2; index < matrix[0].length; index++) {
-        matrix[0][index] = chaine1[index - 2];
+        matrix[0][index] = { value: chaine1[index - 2], type: "init" };
       }
 
       for (let i = 2; i < matrix.length; i++) {
-        matrix[i][0] = chaine2[i - 2];
+        matrix[i][0] = { value: chaine2[i - 2], type: "init" };
       }
 
       this.resultMatrix = matrix;
@@ -220,10 +242,10 @@ table {
   @apply inline-flex border-4 border-app-200 mt-4;
 }
 td {
-  @apply flex items-center justify-center text-2xl xl:text-4xl border-4 border-app-200 shadow-inner h-12 w-12 xl:h-16 xl:w-16 text-center font-mono;
+  @apply flex items-center justify-center text-2xl 2xl:text-4xl border-4 border-app-200 shadow-inner h-12 w-12 2xl:h-16 2xl:w-16 text-center font-mono;
 }
 
 td.char {
-  @apply capitalize text-2xl xl:text-4xl font-bold border-4 border-app-200 shadow-inner h-12 w-12 xl:h-16 xl:w-16 text-center text-app-700 bg-app-50;
+  @apply capitalize text-2xl 2xl:text-4xl font-bold border-4 border-app-200 shadow-inner h-12 w-12 2xl:h-16 2xl:w-16 text-center text-app-700 bg-app-50;
 }
 </style>
