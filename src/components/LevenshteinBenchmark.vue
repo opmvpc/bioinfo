@@ -416,22 +416,20 @@ export default {
       if (m === 0) {
         return n;
       }
-
       if (n === 0) {
         return m;
       }
-
       if (chaine1[m - 1] === chaine2[n - 1]) {
         return this.levensteinNaif2(chaine1, chaine2, m - 1, n - 1);
-      }
+    }
 
-      const min =
+      return (
         Math.min(
           this.levensteinNaif2(chaine1, chaine2, m, n - 1), // insert
           this.levensteinNaif2(chaine1, chaine2, m - 1, n), // remove
           this.levensteinNaif2(chaine1, chaine2, m - 1, n - 1) // replace
-        ) + 1;
-      return min;
+        ) + 1
+      );
     },
     levensteinMemo(chaine1, chaine2, m, n, cache) {
       // Source: https://www.geeksforgeeks.org/edit-distance-dp-using-memoization/

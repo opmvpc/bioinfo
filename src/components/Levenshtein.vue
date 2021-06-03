@@ -73,7 +73,7 @@
         <div class="prose">
           <h2>Résultat</h2>
         </div>
-        <div class="overflow-x-scroll sm:overflow-hidden">
+        <div class="overflow-x-auto">
           <table ref="matrix">
             <tr v-for="(row, indexRow) in resultMatrix" :key="indexRow">
               <td
@@ -99,9 +99,24 @@
           </table>
         </div>
 
-        <div class="text-gray-600 mt-2">
-          Itération <span class="font-bold">{{ iteration }}</span> sur
-          <span class="font-bold">{{ iterationCount }}</span>
+        <div class="text-gray-600 mt-2 flex w-full space-x-4 items-center">
+          <div>
+            <label for="iteration-count"
+              >Itération <span class="font-bold">{{ iteration }}</span> sur
+              <span class="font-bold">{{ iterationCount }}</span></label
+            >
+          </div>
+          <meter
+            class="flex-grow"
+            id="iteration-count"
+            min="0"
+            :max="iterationCount"
+            low="33"
+            high="66"
+            optimum="80"
+            :value="iteration"
+          >
+          </meter>
         </div>
       </div>
     </div>
